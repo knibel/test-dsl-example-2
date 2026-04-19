@@ -3,6 +3,7 @@ package com.example.testdslexample2;
 import com.example.testdslexample2.driver.ServiceVisitBookingDslDriver;
 import com.example.testdslexample2.dsl.AbstractVisitBookingDslTest;
 import com.example.testdslexample2.dsl.VisitBookingTestDsl;
+import org.junit.jupiter.api.Test;
 
 /**
  * <strong>Unit-test scope</strong> – no Spring context, fastest feedback loop.
@@ -13,6 +14,11 @@ import com.example.testdslexample2.dsl.VisitBookingTestDsl;
 class VisitBookingServiceDslTest extends AbstractVisitBookingDslTest {
 
     private final VisitBookingTestDsl dsl = new ServiceVisitBookingDslDriver();
+
+    @Test
+    void booksVisitSlotWithServiceDriver() {
+        bookingAnAvailableSlotAssignsItToTheOwner();
+    }
 
     @Override
     protected VisitBookingTestDsl dsl() {

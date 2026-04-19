@@ -36,11 +36,18 @@ These interfaces are technology-independent and express only domain language.
 
 ### Abstract base class
 
-`AbstractVisitBookingDslTest` contains all test scenarios written once in domain language.
-Subclasses only need to supply a `VisitBookingTestDsl` implementation (the driver):
+`AbstractVisitBookingDslTest` contains the reusable scenario logic in domain language.
+Concrete test classes still declare the actual `@Test` methods and delegate to the
+shared base logic, while only supplying a `VisitBookingTestDsl` implementation
+(the driver):
 
 ```java
 class MyTest extends AbstractVisitBookingDslTest {
+    @Test
+    void booksVisitSlot() {
+        bookingAnAvailableSlotAssignsItToTheOwner();
+    }
+
     @Override
     protected VisitBookingTestDsl dsl() {
         return myDriver;
@@ -66,4 +73,5 @@ Each driver wires the same DSL to a different testing technology:
 | `VisitBookingRestDslTest` | `RestVisitBookingDslDriver` | Actions go through HTTP via MockMvc |
 | `VisitBookingUiDslTest` | `UiVisitBookingDslDriver` | Full HTTP round-trip (like a browser) |
 
-All three test classes extend `AbstractVisitBookingDslTest` and run the **exact same scenario** — only the driver changes.
+All three test classes declare their own concrete `@Test` methods and run the
+**exact same scenario** via `AbstractVisitBookingDslTest` — only the driver changes.

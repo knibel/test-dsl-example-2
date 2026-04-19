@@ -1,7 +1,5 @@
 package com.example.testdslexample2.dsl;
 
-import org.junit.jupiter.api.Test;
-
 /**
  * Abstract base class for visit-booking test scenarios.
  * <p>
@@ -13,8 +11,7 @@ public abstract class AbstractVisitBookingDslTest {
 
     protected abstract VisitBookingTestDsl dsl();
 
-    @Test
-    void bookingAnAvailableSlotAssignsItToTheOwner() {
+    protected final void bookingAnAvailableSlotAssignsItToTheOwner() {
         dsl().given().oneAvailableVisitSlotForPet("slot-1", "Bella");
 
         dsl().when().theOwnerBooksTheFirstAvailableSlot("Sam");

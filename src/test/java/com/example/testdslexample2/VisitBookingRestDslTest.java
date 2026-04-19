@@ -4,6 +4,7 @@ import com.example.testdslexample2.adapter.out.memory.InMemoryVisitSlotRepositor
 import com.example.testdslexample2.driver.RestVisitBookingDslDriver;
 import com.example.testdslexample2.dsl.AbstractVisitBookingDslTest;
 import com.example.testdslexample2.dsl.VisitBookingTestDsl;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,11 @@ class VisitBookingRestDslTest extends AbstractVisitBookingDslTest {
 
     @Autowired
     private InMemoryVisitSlotRepository repository;
+
+    @Test
+    void booksVisitSlotThroughRestDriver() {
+        bookingAnAvailableSlotAssignsItToTheOwner();
+    }
 
     @Override
     protected VisitBookingTestDsl dsl() {
