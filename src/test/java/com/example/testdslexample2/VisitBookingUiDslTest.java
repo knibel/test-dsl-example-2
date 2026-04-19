@@ -2,7 +2,6 @@ package com.example.testdslexample2;
 
 import com.example.testdslexample2.adapter.out.memory.InMemoryVisitSlotRepository;
 import com.example.testdslexample2.driver.UiVisitBookingDslDriver;
-import com.example.testdslexample2.dsl.AbstractVisitBookingDslTest;
 import com.example.testdslexample2.dsl.VisitBookingTestDsl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
  * WebDriver or Playwright; the DSL stays exactly the same.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class VisitBookingUiDslTest extends AbstractVisitBookingDslTest {
+class VisitBookingUiDslTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -29,11 +28,13 @@ class VisitBookingUiDslTest extends AbstractVisitBookingDslTest {
 
     @Test
     void booksVisitSlotThroughUiDriver() {
-        bookingAnAvailableSlotAssignsItToTheOwner();
-    }
+        VisitBookingTestDsl dsl = new UiVisitBookingDslDriver(restTemplate, repository);
 
-    @Override
-    protected VisitBookingTestDsl dsl() {
-        return new UiVisitBookingDslDriver(restTemplate, repository);
+        dsl.given().oneAvailableVisitSlotForPet("slot-1", "Bella");
+
+        dsl.when().theOwnerBooksTheFirstAvailableSlot("Sam");
+
+        dsl.then().theSlotIsBookedByOwner("slot-1", "Sam");
+        dsl.then().noSlotIsAvailableAnymore();
     }
 }

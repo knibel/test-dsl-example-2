@@ -34,23 +34,22 @@ Tests in `src/test` use explicit Given/When/Then APIs:
 
 These interfaces are technology-independent and express only domain language.
 
-### Abstract base class
+### Test structure
 
-`AbstractVisitBookingDslTest` contains the reusable scenario logic in domain language.
-Concrete test classes still declare the actual `@Test` methods and delegate to the
-shared base logic, while only supplying a `VisitBookingTestDsl` implementation
-(the driver):
+Each concrete test class contains the full Given/When/Then scenario directly at
+the top layer, so opening the test file shows the assumptions, action, and
+assertions immediately. Only the driver wiring changes:
 
 ```java
-class MyTest extends AbstractVisitBookingDslTest {
+class MyTest {
+    private final VisitBookingTestDsl dsl = myDriver;
+
     @Test
     void booksVisitSlot() {
-        bookingAnAvailableSlotAssignsItToTheOwner();
-    }
-
-    @Override
-    protected VisitBookingTestDsl dsl() {
-        return myDriver;
+        dsl.given().oneAvailableVisitSlotForPet("slot-1", "Bella");
+        dsl.when().theOwnerBooksTheFirstAvailableSlot("Sam");
+        dsl.then().theSlotIsBookedByOwner("slot-1", "Sam");
+        dsl.then().noSlotIsAvailableAnymore();
     }
 }
 ```
@@ -73,5 +72,5 @@ Each driver wires the same DSL to a different testing technology:
 | `VisitBookingRestDslTest` | `RestVisitBookingDslDriver` | Actions go through HTTP via MockMvc |
 | `VisitBookingUiDslTest` | `UiVisitBookingDslDriver` | Full HTTP round-trip (like a browser) |
 
-All three test classes declare their own concrete `@Test` methods and run the
-**exact same scenario** via `AbstractVisitBookingDslTest` — only the driver changes.
+All three test classes contain the **exact same scenario** in domain language —
+only the driver changes.

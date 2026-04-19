@@ -1,7 +1,6 @@
 package com.example.testdslexample2;
 
 import com.example.testdslexample2.driver.ServiceVisitBookingDslDriver;
-import com.example.testdslexample2.dsl.AbstractVisitBookingDslTest;
 import com.example.testdslexample2.dsl.VisitBookingTestDsl;
 import org.junit.jupiter.api.Test;
 
@@ -11,17 +10,17 @@ import org.junit.jupiter.api.Test;
  * Uses {@link ServiceVisitBookingDslDriver} which creates repository and
  * service instances directly.
  */
-class VisitBookingServiceDslTest extends AbstractVisitBookingDslTest {
+class VisitBookingServiceDslTest {
 
     private final VisitBookingTestDsl dsl = new ServiceVisitBookingDslDriver();
 
     @Test
     void booksVisitSlotWithServiceDriver() {
-        bookingAnAvailableSlotAssignsItToTheOwner();
-    }
+        dsl.given().oneAvailableVisitSlotForPet("slot-1", "Bella");
 
-    @Override
-    protected VisitBookingTestDsl dsl() {
-        return dsl;
+        dsl.when().theOwnerBooksTheFirstAvailableSlot("Sam");
+
+        dsl.then().theSlotIsBookedByOwner("slot-1", "Sam");
+        dsl.then().noSlotIsAvailableAnymore();
     }
 }

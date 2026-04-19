@@ -2,7 +2,6 @@ package com.example.testdslexample2;
 
 import com.example.testdslexample2.adapter.out.memory.InMemoryVisitSlotRepository;
 import com.example.testdslexample2.driver.RestVisitBookingDslDriver;
-import com.example.testdslexample2.dsl.AbstractVisitBookingDslTest;
 import com.example.testdslexample2.dsl.VisitBookingTestDsl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-class VisitBookingRestDslTest extends AbstractVisitBookingDslTest {
+class VisitBookingRestDslTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -28,11 +27,13 @@ class VisitBookingRestDslTest extends AbstractVisitBookingDslTest {
 
     @Test
     void booksVisitSlotThroughRestDriver() {
-        bookingAnAvailableSlotAssignsItToTheOwner();
-    }
+        VisitBookingTestDsl dsl = new RestVisitBookingDslDriver(mockMvc, repository);
 
-    @Override
-    protected VisitBookingTestDsl dsl() {
-        return new RestVisitBookingDslDriver(mockMvc, repository);
+        dsl.given().oneAvailableVisitSlotForPet("slot-1", "Bella");
+
+        dsl.when().theOwnerBooksTheFirstAvailableSlot("Sam");
+
+        dsl.then().theSlotIsBookedByOwner("slot-1", "Sam");
+        dsl.then().noSlotIsAvailableAnymore();
     }
 }
