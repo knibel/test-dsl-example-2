@@ -6,10 +6,13 @@ import com.example.testdslexample2.dsl.GivenVisitBookingDsl;
 import com.example.testdslexample2.dsl.ThenVisitBookingDsl;
 import com.example.testdslexample2.dsl.VisitBookingTestDsl;
 import com.example.testdslexample2.dsl.WhenVisitBookingDsl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -24,6 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * the full HTTP layer.
  */
 public class RestVisitBookingDslDriver implements VisitBookingTestDsl, GivenVisitBookingDsl, WhenVisitBookingDsl, ThenVisitBookingDsl {
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final MockMvc mockMvc;
     private final InMemoryVisitSlotRepository repository;
@@ -56,12 +61,13 @@ public class RestVisitBookingDslDriver implements VisitBookingTestDsl, GivenVisi
     @Override
     public void theOwnerBooksTheFirstAvailableSlot(String ownerName) {
         try {
+            String json = OBJECT_MAPPER.writeValueAsString(Map.of("ownerName", ownerName));
             mockMvc.perform(post("/api/visit-slots/bookings")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content("{\"ownerName\":\"" + ownerName + "\"}"))
+                            .content(json))
                     .andExpect(status().isOk());
         } catch (Exception e) {
-            throw new RuntimeException("REST booking request failed", e);
+            throw new RuntimeException("REST booking request failed for owner '" + ownerName + "'", e);
         }
     }
 
